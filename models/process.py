@@ -16,3 +16,10 @@ class AnalyticProcess(db):
     status = Column(String,default="pending")
     file = Column(String)
     webhook = Column(String,default="")
+    
+
+class AnalyticProcessIn(BaseModel):
+  name: str = Field(..., example="process_1")
+  description: str = Field(default="")
+  webhook: str = Field(...)
+  
