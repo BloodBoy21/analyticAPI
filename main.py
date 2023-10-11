@@ -1,10 +1,10 @@
-from fastapi import FastAPI 
+from fastapi import FastAPI
 from database.db import engine, db
 from api.init import api_router
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="miLocal")
-app.include_router(api_router, prefix="/api", tags=["api","v1"])
+app.include_router(api_router, prefix="/api", tags=["api", "v1"])
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
