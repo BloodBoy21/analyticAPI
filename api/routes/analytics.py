@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from middleware.user_auth import auth_user
+from models.process import AnalyticProcess
 
 router = APIRouter()
 
@@ -9,16 +10,16 @@ def create_analytics():
     pass
 
 
-@router.post("process/{id}")
-def process_analytics(process: Depends(auth_user)):
+@router.post("/process/{id}")
+def process_analytics(process: AnalyticProcess = Depends(auth_user)):
     pass
 
 
-@router.patch("process/{id}")
-def add_data_to_analytics(process: Depends(auth_user)):
+@router.patch("/process/{id}")
+def add_data_to_analytics(process: AnalyticProcess = Depends(auth_user)):
     pass
 
 
-@router.get("process/{id}")
-def get_analytics(process: Depends(auth_user)):
+@router.get("/process/{id}")
+def get_analytics(process: AnalyticProcess = Depends(auth_user)):
     pass

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from database.db import engine, db
 from api.init import api_router
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 app = FastAPI(title="miLocal")
 app.include_router(api_router, prefix="/api", tags=["api", "v1"])
@@ -22,3 +23,10 @@ async def startup():
 @app.get("/")
 def root():
     return {"status": "ok"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    port = os.getenv("PORT", 3000)
+    uvicorn.run(app="main:app", host="0.0.0.0", port=port, reload=True)
