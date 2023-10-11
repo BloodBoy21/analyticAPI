@@ -4,8 +4,11 @@ from fastapi.security import HTTPBearer
 import os
 from services.analytic_services import get_service_by_id
 from models.process import AnalyticProcess
+import logging
 
 JWT_SECRET = os.getenv("JWT_SECRET")
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 async def auth_user(auth: str = Depends(HTTPBearer())) -> AnalyticProcess:
@@ -27,7 +30,8 @@ async def auth_user(auth: str = Depends(HTTPBearer())) -> AnalyticProcess:
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token",
         )
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
