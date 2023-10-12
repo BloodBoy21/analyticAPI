@@ -2,6 +2,7 @@ from unittest import TestCase
 import numpy as np
 import pandas as pd
 import sys
+import os
 
 sys.path.append("../..")
 from services.anomaly_services import DetectAnomaly
@@ -14,8 +15,6 @@ def create_csv():
 
 
 def delete_csv():
-    import os
-
     os.remove("./test.csv")
 
 
@@ -26,8 +25,6 @@ def create_xlsx():
 
 
 def delete_xlsx():
-    import os
-
     os.remove("./test.xlsx")
 
 
@@ -37,7 +34,7 @@ class AnalyticTesting(TestCase):
         anomaly_service = DetectAnomaly(data, 20)
         anomaly = anomaly_service.array()
         assert len(anomaly) > 0
-        assert type(anomaly) == pd.Series
+        assert type(anomaly) == list
 
     def test_create_process_csv(self):
         create_csv()
@@ -45,7 +42,7 @@ class AnalyticTesting(TestCase):
         anomaly = anomaly_service.csv()
         delete_csv()
         assert len(anomaly) > 0
-        assert type(anomaly) == pd.Series
+        assert type(anomaly) == list
 
     def test_create_process_xlsx(self):
         create_xlsx()
@@ -53,4 +50,4 @@ class AnalyticTesting(TestCase):
         anomaly = anomaly_service.xlsx()
         delete_xlsx()
         assert len(anomaly) > 0
-        assert type(anomaly) == pd.Series
+        assert type(anomaly) == list

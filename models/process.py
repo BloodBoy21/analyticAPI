@@ -1,5 +1,5 @@
 from database.db import db
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel, Field, validator
 from typing import Optional
@@ -17,12 +17,18 @@ class AnalyticProcess(db):
     status = Column(String, default="pending")
     file = Column(String)
     webhook = Column(String, default="")
+    data_column = Column(String, default="data")
+    window_size = Column(Integer, default=10)
+    threshold = Column(Integer, default=2)
 
 
 class AnalyticProcessIn(BaseModel):
     name: str = Field(...)
     description: str = Field(default="")
     webhook: str = Field(...)
+    data_column: str = Field(default="data", alias="dataColumn")
+    window_size: int = Field(default=10, alias="windowSize")
+    threshold: int = Field(default=2)
 
 
 class AnalyticProcessOut(BaseModel):

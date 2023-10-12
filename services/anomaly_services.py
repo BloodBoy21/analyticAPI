@@ -26,16 +26,21 @@ class DetectAnomaly:
         data["top"] = data[main_column].rolling(window=window_size).mean() + (
             threshold * data[main_column].rolling(window=window_size).std()
         )
-        data.plot()
         data["anomaly"] = data.apply(
             lambda row: row[main_column]
             if (row[main_column] <= row["bottom"] or row[main_column] >= row["top"])
             else np.nan,
             axis=1,
         )
-        data.plot()
         self.data = data
-        return data["anomaly"].dropna()
+        anomalies = (
+            data[data["anomaly"].notna()]
+            .drop(["bottom", "top"], axis=1)
+            .to_dict("records")
+        )
+        for anomaly in anomalies:
+            del anomaly["anomaly"]
+        return anomalies
 
     def csv(self) -> list:
         self.data = pd.read_csv(self.data)

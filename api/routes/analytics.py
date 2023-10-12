@@ -24,8 +24,11 @@ def add_data_to_analytics(process: AnalyticProcess = Depends(auth_user)):
         raise HTTPException(status_code=403, detail="Not authorized")
 
 
-@router.get("/process/{id}")
-def get_analytics(process: AnalyticProcess = Depends(auth_user)):
-    if id != process.process_id:
-        raise HTTPException(status_code=403, detail="Not authorized")
-    pass
+@router.get("/process")
+def get_analytics(process: AnalyticProcess = Depends(auth_user)) -> dict:
+    data = analytics_service.get_anomaly(process.process_id)
+    return {
+        "process_id": process.process_id,
+        "process_name": process.name,
+        "data": data,
+    }
