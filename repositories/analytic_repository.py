@@ -15,3 +15,11 @@ class AnalyticRepository(Repository):
     def create(self, process: AnalyticProcessIn) -> AnalyticProcess:
         new_process = self.model(**process.model_dump())
         return super().create(new_process)
+
+    def update_by_id(self, process_id: int, data: dict) -> AnalyticProcess:
+        process = self.find_by_id(process_id)
+        if not process:
+            raise Exception("Process not found")
+        self.session.query(self.model).filter_by(process_id=process_id).update(data)
+        self.commit()
+        return self.find_by_id(process_id)

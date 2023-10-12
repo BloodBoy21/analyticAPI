@@ -1,25 +1,31 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from middleware.user_auth import auth_user
 from models.process import AnalyticProcess
+from models.process import AnalyticProcessIn, AnalyticProcessOut, AnalyticProcess
+import services.analytic_services as analytics_service
 
 router = APIRouter()
 
 
 @router.post("/")
-def create_analytics():
-    pass
+def create_analytics(process: AnalyticProcessIn) -> AnalyticProcessOut:
+    return analytics_service.create_analytics(process)
 
 
 @router.post("/process/{id}")
 def process_analytics(process: AnalyticProcess = Depends(auth_user)):
-    pass
+    if id != process.process_id:
+        raise HTTPException(status_code=403, detail="Not authorized")
 
 
 @router.patch("/process/{id}")
 def add_data_to_analytics(process: AnalyticProcess = Depends(auth_user)):
-    pass
+    if id != process.process_id:
+        raise HTTPException(status_code=403, detail="Not authorized")
 
 
 @router.get("/process/{id}")
 def get_analytics(process: AnalyticProcess = Depends(auth_user)):
+    if id != process.process_id:
+        raise HTTPException(status_code=403, detail="Not authorized")
     pass

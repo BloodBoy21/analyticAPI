@@ -15,4 +15,15 @@ def get_service_by_id(process_id: int) -> AnalyticProcess:
     process = repository.find_by_id(process_id)
     if not process:
         raise Exception("Process not found")
-    return AnalyticProcess(**process.__dict__)
+    process = process.__dict__
+    del process["_sa_instance_state"]
+    return AnalyticProcess(**process)
+
+
+def set_file(process_id: int, file: str) -> AnalyticProcess:
+    process = repository.update_by_id(process_id, {"file": file})
+    if not process:
+        raise Exception("Process not found")
+    process = process.__dict__
+    del process["_sa_instance_state"]
+    return AnalyticProcess(**process)
