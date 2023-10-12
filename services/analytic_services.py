@@ -6,6 +6,8 @@ from database.cache import get_redis
 import requests as rq
 import json
 import os
+from utils.bucket import download_file, upload_file
+import pandas as pd
 
 cache = get_redis()
 repository = AnalyticRepository()
@@ -89,3 +91,31 @@ def analyze_data(process: AnalyticProcess, data: bytes, type: str):
     delete_temp_file(temp_file)
     save_anomaly(anomaly, process.process_id)
     send_to_webhook(process.process_id)
+
+
+def add_data(process: AnalyticProcess, data: bytes, mime_type: str) -> bytes:
+    if not process:
+        raise Exception("Process not found")
+    original_type = process.file.split(".")[-1]
+    temp_file = f"./temp/{process.file}_add"
+    open(temp_file, "wb").write(data)
+    old_file = download_file(process.file)
+    open(process.file, "wb").write(old_file)
+    types = {
+        "csv": pd.read_csv,
+        "xlsx": pd.read_excel,
+    }
+    read_file = types.get(original_type)
+    df1 = read_file(temp_file)
+    df2 = read_file(process.file)
+    new_df = pd.concat([df1, df2])
+    save_types = {
+        "csv": new_df.to_csv,
+        "xlsx": new_df.to_excel,
+    }
+    save_file = save_types.get(original_type)
+    save_file(process.file)
+    new_file_bytes = open(process.file, "rb").read()
+    upload_file(new_file_bytes, process.file, mime_type)
+    delete_temp_file(temp_file)
+    return new_file_bytes
