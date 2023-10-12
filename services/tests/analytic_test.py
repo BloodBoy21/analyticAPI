@@ -14,7 +14,6 @@ class AnalyticTesting(TestCase):
     def test_create_process(self):
         process = AnalyticProcessIn(name="process_1", webhook="http://localhost:8000")
         new_process = analytic_service.create_analytics(process)
-        print(new_process)
         assert new_process.status == "pending"
         assert new_process.__class__ == AnalyticProcessOut
         assert type(new_process.token) == str
