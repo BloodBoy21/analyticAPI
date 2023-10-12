@@ -1,4 +1,9 @@
-from models.process import AnalyticProcess, AnalyticProcessIn, AnalyticProcessOut
+from models.process import (
+    AnalyticProcess,
+    AnalyticProcessIn,
+    AnalyticProcessOut,
+    AnalyticProcessUpdate,
+)
 from repositories.analytic_repository import AnalyticRepository
 from utils import security
 from services.anomaly_services import DetectAnomaly
@@ -30,6 +35,17 @@ def create_analytics(process_in: AnalyticProcessIn) -> AnalyticProcessOut:
     process = repository.create(process_in)
     token = security.generate_token(process.process_id)
     return AnalyticProcessOut(token=token, **process.__dict__)
+
+
+def update_analytics(process_id: int, data: AnalyticProcessUpdate) -> AnalyticProcess:
+    process = repository.update_by_id(
+        process_id, data.model_dump(exclude_none=True, exclude_unset=True)
+    )
+    if not process:
+        raise Exception("Process not found")
+    process = process.__dict__
+    del process["_sa_instance_state"]
+    return AnalyticProcess(**process)
 
 
 def get_service_by_id(process_id: int) -> AnalyticProcess:

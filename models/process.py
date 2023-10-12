@@ -22,6 +22,13 @@ class AnalyticProcess(db):
     threshold = Column(Integer, default=2)
 
 
+class AnalyticProcessUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    webhook: Optional[str] = None
+    data_column: Optional[str] = Field(alias="dataColumn", default=None)
+
+
 class AnalyticProcessIn(BaseModel):
     name: str = Field(...)
     description: str = Field(default="")

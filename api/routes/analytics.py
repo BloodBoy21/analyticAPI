@@ -1,7 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from middleware.user_auth import auth_user
 from models.process import AnalyticProcess
-from models.process import AnalyticProcessIn, AnalyticProcessOut, AnalyticProcess
+from models.process import (
+    AnalyticProcessIn,
+    AnalyticProcessOut,
+    AnalyticProcess,
+    AnalyticProcessUpdate,
+)
 import services.analytic_services as analytics_service
 from utils.security import verify_jwt
 
@@ -13,16 +18,16 @@ def create_analytics(process: AnalyticProcessIn) -> AnalyticProcessOut:
     return analytics_service.create_analytics(process)
 
 
-@router.post("/process/{id}")
-def process_analytics(process: AnalyticProcess = Depends(auth_user)):
-    if id != process.process_id:
-        raise HTTPException(status_code=403, detail="Not authorized")
-
-
-@router.patch("/process/{id}")
-def add_data_to_analytics(process: AnalyticProcess = Depends(auth_user)):
-    if id != process.process_id:
-        raise HTTPException(status_code=403, detail="Not authorized")
+@router.patch("/process")
+def add_data_to_analytics(
+    data: AnalyticProcessUpdate, process: AnalyticProcess = Depends(auth_user)
+) -> dict:
+    process_updated = analytics_service.update_analytics(process.process_id, data)
+    return {
+        "message": "Process updated",
+        "process_id": process_updated.process_id,
+        "process_name": process_updated.name,
+    }
 
 
 @router.get("/process")
