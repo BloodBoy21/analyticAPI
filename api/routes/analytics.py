@@ -9,6 +9,7 @@ from models.process import (
 )
 import services.analytic_services as analytics_service
 from utils.security import verify_jwt
+from utils.bucket import download_file
 
 router = APIRouter()
 
@@ -27,6 +28,23 @@ def add_data_to_analytics(
         "message": "Process updated",
         "process_id": process_updated.process_id,
         "process_name": process_updated.name,
+    }
+
+
+@router.post("/process")
+def analyze_again(process: AnalyticProcess = Depends(auth_user)) -> dict:
+    bytes = analytics_service.get_anomaly_bytes(process.process_id)
+    if not bytes:
+        bytes = download_file(process.file)
+        analytics_service.save_anomaly_bytes(bytes, process.process_id)
+    if not bytes:
+        raise HTTPException(status_code=400, detail="File not found")
+    file_type = process.file.split(".")[-1]
+    data = analytics_service.analyze_data(process, bytes, file_type)
+    return {
+        "process_id": process.process_id,
+        "process_name": process.name,
+        "data": data,
     }
 
 

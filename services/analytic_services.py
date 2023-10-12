@@ -13,6 +13,7 @@ import json
 import os
 from utils.bucket import download_file, upload_file
 import pandas as pd
+import pickle
 
 cache = get_redis()
 repository = AnalyticRepository()
@@ -25,6 +26,17 @@ def save_anomaly(anomaly: list, process_id: int):
 
 def get_anomaly(process_id: int):
     return json.loads(cache.get(f"anomaly_{process_id}"))
+
+
+def save_anomaly_bytes(bytes: bytes, process_id: int):
+    cache.set(f"anomaly_{process_id}_bytes", pickle.dumps(bytes), ex=ONE_MONTH)
+
+
+def get_anomaly_bytes(process_id: int):
+    try:
+        return pickle.loads(cache.get(f"anomaly_{process_id}_bytes"))
+    except:
+        return None
 
 
 def delete_temp_file(file: str):
@@ -84,7 +96,7 @@ def send_to_webhook(process: int) -> AnalyticProcess:
     )
 
 
-def analyze_data(process: AnalyticProcess, data: bytes, type: str):
+def analyze_data(process: AnalyticProcess, data: bytes, type: str) -> list:
     if not process:
         raise Exception("Process not found")
     temp_file = f"./temp/{process.file}"
@@ -107,6 +119,7 @@ def analyze_data(process: AnalyticProcess, data: bytes, type: str):
     delete_temp_file(temp_file)
     save_anomaly(anomaly, process.process_id)
     send_to_webhook(process.process_id)
+    return anomaly
 
 
 def add_data(process: AnalyticProcess, data: bytes, mime_type: str) -> bytes:
