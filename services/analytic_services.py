@@ -86,5 +86,6 @@ def analyze_data(process: AnalyticProcess, data: bytes, type: str):
         raise Exception("File type not supported")
     anomaly = analyze()
     repository.update_by_id(process.process_id, {"status": "done"})
+    delete_temp_file(temp_file)
     save_anomaly(anomaly, process.process_id)
     send_to_webhook(process.process_id)
