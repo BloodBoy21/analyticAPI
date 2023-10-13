@@ -25,7 +25,6 @@ credentials_certificate = {
     ),
     "universe_domain": os.getenv("FIREBASE_UNIVERSE_DOMAIN", "googleapis.com"),
 }
-print(credentials_certificate)
 cred = credentials.Certificate(credentials_certificate)
 firebase_admin.initialize_app(cred, {"storageBucket": os.getenv("FIREBASE_BUCKET")})
 
