@@ -29,7 +29,7 @@ def upload_document(
     bytes = file.file.read()
     file_data = bucket.upload_file(bytes, file_name, file.content_type)
     save_anomaly_bytes(bytes, process.process_id)
-    set_file(process.process_id, file_data["filename"])
+    process = set_file(process.process_id, file_data["filename"])
     analyze_data(process, bytes, file_type)
     return {"url": file_data["public_url"]}
 

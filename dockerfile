@@ -5,6 +5,8 @@ RUN apt-get update && apt-get install -y redis-server
 
 WORKDIR /app
 
+RUN mkdir /app/temp
+
 COPY ./requirements.txt /app/requirements.txt
 
 RUN pip install -r requirements.txt

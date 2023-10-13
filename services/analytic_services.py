@@ -99,7 +99,9 @@ def send_to_webhook(process: int) -> AnalyticProcess:
 def analyze_data(process: AnalyticProcess, data: bytes, type: str) -> list:
     if not process:
         raise Exception("Process not found")
-    temp_file = f"./temp/{process.file}"
+    temp_file = f"temp/{process.file}"
+    temp_file = os.path.realpath(temp_file)
+    print(temp_file)
     open(temp_file, "wb").write(data)
     detect_anomaly = DetectAnomaly(
         temp_file,
